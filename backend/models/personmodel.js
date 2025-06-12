@@ -2,22 +2,18 @@ import mongoose from 'mongoose'
 
 
 const schema = mongoose.Schema({
-    name: String,
-    socialMedia: [
-        {
-            platform: String,
-            followers: Number,
-            link: String
-        }
-    ],
-    originalId: {
-    type: Number,
-    required: true,
-    unique: true,
-    },
-    recommendedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }],
-    image: String
-})
+  name: String,
+  socialMedia: [
+    {
+      platform: String,
+      followers: Number,
+      link: String
+    }
+  ],
+  recommendedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }],
+  personSuggesting: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  image: String,
+});
 
 
 schema.set('toJSON', {

@@ -1,14 +1,20 @@
 import mongoose from 'mongoose'
 
 const userSchema = new mongoose.Schema({
-    email: { type: String, required: true, unique: true },
+    name: { type: String, unique: true },
     username: { type: String, required: true },
     password: { type: String, required: true },
-    recommendedBooks: [
+    suggestedBooks: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Book'
         }
+    ],
+    suggestedPeople: [
+    {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Person'
+    }
     ]
 });
 
@@ -24,4 +30,4 @@ userSchema.set('toJSON', {
 
 const User = mongoose.model('User', userSchema)
 
-module.exports = User
+export default User

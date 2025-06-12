@@ -1,20 +1,15 @@
 import mongoose from 'mongoose'
 
 
-const schema = mongoose.Schema({
-    title: String,
+const schema = new mongoose.Schema({
+  title: { type: String, required: true, unique: true },
   author: String,
   year: Number,
   description: String,
   recommendedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Person' }],
-  originalId: {
-    type: Number,
-    required: true,
-    unique: true,
-  },
-  image: String
-})
-
+  personSuggesting: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+  image: String,
+});
 
 schema.set('toJSON', {
   transform: (document, returnedObject) => {

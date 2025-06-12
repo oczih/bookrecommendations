@@ -5,7 +5,7 @@ dotenv.config();
 import cors from 'cors';
 import BooksRouter from './routes/books.js';
 import PeopleRouter from './routes/people.js';
-
+import loginRouter from './routes/login.js'
 const app = express();
 const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI;
@@ -15,6 +15,7 @@ app.use(cors())
 
 app.use('/api/books', BooksRouter);
 app.use('/api/people', PeopleRouter);
+app.use('/api/login', loginRouter)
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 })
