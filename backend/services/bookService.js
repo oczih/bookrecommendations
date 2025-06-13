@@ -28,6 +28,7 @@ export const updateBook= async (id, data) => {
     year: updatedBook.year,
     image: updatedBook.image,
     personSuggesting: updatedBook.personSuggesting,
-    recommendedBy: updatedBook.recommendedBy.map(bid => bid.toString())
+    recommendedBy: updatedBook.recommendedBy.map(bid => bid.toString()),
+    likes: updatedBook.likes
   };
 };

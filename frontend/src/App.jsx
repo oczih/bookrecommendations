@@ -147,26 +147,28 @@ useEffect(() => {
 }, [user]);
   useEffect(() => {
     const fetchSuggestedPeople = async () => {
-      if(user & user.id){
+      if(user && user.id){
         try{
           const data = await loginService.get(user.id)
           console.log(data)
           setSuggestedpeople(data.suggestedPeople || [])
         }catch (error){
-          console.error('Failed to fetch suggested books: ', error)
+          console.error('Failed to fetch suggested people: ', error)
         }
       }
 
     }
     fetchSuggestedPeople();
   }, [user])
-
+  useEffect(() => {
+  console.log('Suggested People:', suggestedPeople);
+}, [suggestedPeople]);
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-500 to-indigo-500 p-8">
       <Routes>
         <Route path="/" element={
           <>
-            <Header user={user}/>
+            <Header user={user} setUser={setUser}/>
             <Notification message={message} color={color}/>
             <div className="rounded-sm min-h-[10vh] bg-white/[var(--bg-opacity)] [--bg-opacity:50%] mb-8">
               <div className="p-10">

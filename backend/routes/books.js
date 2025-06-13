@@ -8,7 +8,7 @@ import User from '../models/user.js'
 // Get all books
 router.get('/', async (req, res) => {
   try {
-    const books = await bookService.getEntries(); // Use the properly formatted service
+    const books = await bookService.getEntries();
     res.json(books);
   } catch (error) {
     console.error('Failed to fetch books:', error);

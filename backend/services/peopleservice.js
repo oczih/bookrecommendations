@@ -8,7 +8,9 @@ export const getEntries = async () => {
     name: p.name,
     socialMedia: p.socialMedia,
     recommendedBooks: p.recommendedBooks.map(id => id.toString()),
-    image: p.image
+    personSuggesting: p.personSuggesting,
+    image: p.image,
+    likes: p.likes
   }));
 };
 export const getByPeopleId = async (id) => {
@@ -19,7 +21,9 @@ export const getByPeopleId = async (id) => {
     originalId: p.originalId,
     name: p.name,
     recommendedBooks: p.recommendedBooks.map(id => id.toString()),
-    image: p.image
+    personSuggesting: p.personSuggesting,
+    image: p.image,
+    likes: p.likes
   };
 };
 export const addPerson = async (entry) => {
@@ -48,6 +52,7 @@ export const updatePerson = async (id, data) => {
     name: updatedPerson.name,
     picture: updatedPerson.picture,
     recommendedBooks: updatedPerson.recommendedBooks.map(bid => bid.toString()),
-    personSuggesting: updatedPerson.personSuggesting
+    personSuggesting: updatedPerson.personSuggesting,
+    likes: updatedPerson.likes
   };
 };

@@ -13,6 +13,7 @@ const schema = mongoose.Schema({
   recommendedBooks: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Book' }],
   personSuggesting: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   image: String,
+  likes: Number
 });
 
 

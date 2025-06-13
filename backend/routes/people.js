@@ -38,10 +38,10 @@ router.post('/', tokenExtractor, async (req, res) => {
     console.log(req.decodedToken)
     const userId = req.decodedToken.id;
 
-
+    person.personSuggesting = [userId];
     await User.updateOne(
       { _id: userId },
-      { $push: { suggestedPersons: savedPerson._id } }  // or suggestedBooks, depending on your schema
+      { $push: { suggestedPeople: savedPerson._id } }
     );
 
     // 5. Send back saved person

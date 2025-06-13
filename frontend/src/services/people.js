@@ -28,5 +28,14 @@ const createPerson= async newObject => {
 const update = (id, newData) => {
   return axios.put(`${API_URL}/${id}`, newData).then(response => response.data);
 };
+
+const remove = id => {
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.delete(`${API_URL}/${id}`, config)
+  return request.then(response => response.data)
+}
+
 export default {getAll
-, getById, createPerson, update, setToken}
+, getById, createPerson, update, setToken, remove}

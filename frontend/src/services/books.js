@@ -25,5 +25,12 @@ const createBook = async newObject => {
     const response = await axios.post(API_URL, newObject, config);
     return response.data;
 }
+const remove = id => {
+  const config = {
+    headers: { Authorization: token },
+  }
+  const request = axios.delete(`${API_URL}/${id}`, config)
+  return request.then(response => response.data)
+}
 export default {getAll
-, getById, createBook, setToken}
+, getById, createBook, setToken, remove}

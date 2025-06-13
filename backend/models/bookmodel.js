@@ -9,6 +9,7 @@ const schema = new mongoose.Schema({
   recommendedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Person' }],
   personSuggesting: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   image: String,
+  likes: Number
 });
 
 schema.set('toJSON', {
