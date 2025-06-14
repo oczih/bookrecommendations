@@ -25,9 +25,9 @@ app.use('/api/login', loginRouter)
 
 app.use(express.static(path.join(__dirname, 'dist')));
     
-app.get('/*splat', (req, res) => {
-      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
-}); 
+app.use((req, res, next) => {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  });
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
