@@ -25,7 +25,7 @@ app.use('/api/login', loginRouter)
 
 app.use(express.static(path.join(__dirname, 'dist')));
     
-app.use((req, res, next) => {
+app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
   });
 
