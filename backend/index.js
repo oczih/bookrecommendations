@@ -9,7 +9,7 @@ import loginRouter from './routes/login.js'
 import { fileURLToPath } from 'url';
 import path from 'path';
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT || 3000;
 const MONGO_URI = process.env.MONGO_URI;
 
 const __filename = fileURLToPath(import.meta.url);
