@@ -24,6 +24,8 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.15.0",
-    "tailwindcss": "^4.1.10"
+    "path": "^0.12.7",
+    "tailwindcss": "^4.1.10",
+    "url": "^0.11.4"
   }
 }
