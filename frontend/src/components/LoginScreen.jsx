@@ -6,15 +6,15 @@ import {
 } from 'react-router-dom'
 import { Notification } from './Notifications';
 
-export const LoginScreen = ({user, handleLogin, suggestedBooks, suggestedPeople, password, username, handleUsernameChange, handlePasswordChange, message, color}) => {
+export const LoginScreen = ({user, handleLogin, suggestedBooks, suggestedPeople, password, username, handleUsernameChange, handlePasswordChange, message}) => {
     return (
         <div>
             <Header user={user}/> 
-            <Notification message={message} color={color}/>
+            <Notification message={message}/>
             {user ? (
                 <div>
                     <h1 className="text-2xl text-center text-white ml-auto mr-auto max-w-md mb-10">Hello {user.username}</h1>
-                    
+                    <h2>Suggested Books: </h2>
                     {suggestedBooks ? (
                         
                         suggestedBooks.map(book => (
@@ -27,6 +27,7 @@ export const LoginScreen = ({user, handleLogin, suggestedBooks, suggestedPeople,
                             <h2 className="text-2xl text-center text-white ml-auto mr-auto max-w-md mb-10">You haven't added any books!</h2>
                         </div>
                     )}
+                    <h2>Suggested People: </h2>
                     {suggestedPeople ? (
                         suggestedPeople.map(person => (
                         <div key={person.mongoId || person._id} className="max-w-md ml-auto mr-auto flex-shrink-0 w-48 bg-white text-black rounded-lg shadow-lg p-4 hover:scale-95 transition-transform duration-150 ease-in-out drop-shadow-xl  ">

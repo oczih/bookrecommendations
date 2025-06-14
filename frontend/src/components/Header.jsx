@@ -11,9 +11,13 @@ export const Header = ({ user, setUser }) => {
                     {user.username} logged in
                 </div>
                 <div> 
-                    <button onClick={() => {window.localStorage.clear()
-                setUser(null)}
-      } className="flex items-center gap-2 bg-red-100 text-red-800 font-semibold px-4 py-2 rounded-full drop-shadow-sm hover:text-red-1000">log out</button>
+                <button
+                    onClick={() => {
+                    window.localStorage.removeItem('loggedBookappUser'); // safer
+                    setUser(null);
+                    }}
+                    className="flex items-center gap-2 bg-red-100 text-red-800 font-semibold px-4 py-2 rounded-full hover:scale-95 transition-transform duration-150 ease-in-out drop-shadow-md"
+                    >log out</button>
                 </div>
                 </div>
             )}
@@ -24,6 +28,9 @@ export const Header = ({ user, setUser }) => {
                 <Link to={user ? "/suggestaperson" : "/login"} className="hover:scale-95 transition-transform duration-150 ease-in-out drop-shadow-md">
                     <h3 className="text-2xl font-bold text-white">Suggest A Person</h3>
                 </Link>
+                {user && <Link to="/vote" className="hover:scale-95 transition-transform duration-150 ease-in-out drop-shadow-md">
+                    <h3 className="text-2xl font-bold text-white">Vote Here</h3>
+                </Link>}
                 <Link to="/login" className="hover:scale-95 transition-transform duration-150 ease-in-out drop-shadow-md">
                     <h3 className="text-2xl font-bold text-white">{user ? ("My Profile") : ("Login")}</h3>
                 </Link>

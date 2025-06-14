@@ -4,7 +4,7 @@ import peopleService from './services/people';
 import {
   BrowserRouter as Router,
   Routes, Route, Link,
-  useMatch
+  useMatch, useNavigate
 } from 'react-router-dom'
 import { SinglePersonPage } from './components/SinglePersonPage';
 import { Header } from './components/Header'
@@ -13,6 +13,7 @@ import { LoginScreen } from './components/LoginScreen';
 import { Notification } from './components/Notifications';
 import loginService from './services/login'
 import { RegisterScreen } from './components/RegisterScreen';
+import { VoteScreen } from './components/VoteScreen';
 const App = () => {
   const [books, setBooks] = useState([]);
   const [people, setPeople] = useState([]);
@@ -20,7 +21,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [color, setColor] = useState('')
   const [message, setMessage] = useState('');
-  const [user, setUser] = useState(null)
   const [name, setName] = useState('')
   const [passwordHash, setPasswordHash] = useState('')
   const [suggestedBooks, setSuggestedBooks] = useState([])
@@ -35,20 +35,31 @@ const App = () => {
   const handlePasswordHashChange = event => {
     setPasswordHash(event.target.value)
   }
+  const getUserFromStorage = () => {
+    const stored = window.localStorage.getItem('loggedBookappUser');
+    if (!stored) return null;
+    const user = JSON.parse(stored);
+    if (!user.id && user._id) user.id = user._id;
+    return user;
+  };
+
+  const [user, setUser] = useState(getUserFromStorage());
+
+  const navigate = useNavigate();
+
   const handleLogin = async (event) => {
   event.preventDefault();
   try {
     const response = await loginService.login({ username, password })
     const user = { ...response, id: response.id } // ✅ Map _id to id
-    console.log(user)
     window.localStorage.setItem('loggedBookappUser', JSON.stringify(user))
     bookService.setToken(user.token)
     peopleService.setToken(user.token)
     setUser(user)
-    setColor("green")
     setMessage(`Logged in person: ${username}`)
     setUsername('')
     setPassword('')
+    navigate("/")
   } catch (error) {
     setMessage('Wrong username or password')
   }
@@ -129,7 +140,6 @@ useEffect(() => {
       peopleService.setToken(user.token)
     }
   }, []);
-    console.log(user)
     useEffect(() => {
     const fetchSuggestedBooks = async () => {
         if (user && user.id) { // ✅ make sure user and ID exist
@@ -153,6 +163,7 @@ useEffect(() => {
           console.log(data)
           setSuggestedpeople(data.suggestedPeople || [])
         }catch (error){
+          setMessage('Failed to fetch suggested people')
           console.error('Failed to fetch suggested people: ', error)
         }
       }
@@ -191,8 +202,9 @@ useEffect(() => {
           </div>)}
           </>
         } />
-        <Route path="/people/:id" element={<SinglePersonWrapper people={people} books={books} />} />
-        <Route path={"/suggestaperson"} element={<SuggestAPerson onSubmit={submitNewObject} people={people} user={user}/>}/>
+        <Route path="/people/:id" element={<SinglePersonWrapper user={user} setUser={setUser} people={people} books={books} />} />
+        {user && <><Route path={"/suggestaperson"} element={<SuggestAPerson onSubmit={submitNewObject} people={people} user={user}/>}/>
+        <Route path={"/vote"} element={<VoteScreen user={user} setUser={setUser} />} /> </>}
         <Route path="/login" element={
         <LoginScreen
           user={user}
@@ -204,12 +216,11 @@ useEffect(() => {
           handleUsernameChange={handleUsernameChange} 
           handlePasswordChange={handlePasswordChange} 
           message={message} 
-          color={color} 
           />
           } />
         <Route path="/register" element={<RegisterScreen handleSubmit={handleRegister} name={name}
          handleNameChange={handleNameChange} username={username}
-        password={password} handlePasswordChange={handlePasswordChange} handleUsernameChange={handleUsernameChange} message={message} color={color} 
+        password={password} handlePasswordChange={handlePasswordChange} handleUsernameChange={handleUsernameChange} message={message} 
         user={user}
         />}/>
       </Routes>
@@ -217,7 +228,7 @@ useEffect(() => {
   );
 };
 
-const SinglePersonWrapper = ({ people, books }) => {
+const SinglePersonWrapper = ({ user, setUser, people, books }) => {
   const match = useMatch('/people/:id');
   const personId = match?.params?.id;
   const person = people.find(p => p.mongoId === personId) || null;
@@ -225,7 +236,7 @@ const SinglePersonWrapper = ({ people, books }) => {
   // ✅ Filter the books to only the recommended ones
   const recommendedBooks = books.filter(book => person?.recommendedBooks.includes(book._id));
   console.log(recommendedBooks)
-  return <SinglePersonPage person={person} books={recommendedBooks} />;
+  return <SinglePersonPage user={user} setUser={setUser} person={person} books={recommendedBooks} />;
 };
 
 export default App;

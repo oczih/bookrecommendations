@@ -3,10 +3,12 @@ import {
   BrowserRouter as Router,
   Routes, Route, Link,
 } from 'react-router-dom'
-export const RegisterScreen = ({user, handleSubmit, username, password, name, handleUsernameChange, handlePasswordChange, handleNameChange}) => {
+import { Notification } from './Notifications'
+export const RegisterScreen = ({message,user, handleSubmit, username, password, name, handleUsernameChange, handlePasswordChange, handleNameChange}) => {
     return (
         <div>
             <Header user={user}/> 
+            <Notification message={message}/>
                 <h1 className="text-2xl text-center text-white ml-auto mr-auto max-w-md mb-10">Register!</h1>
                 <form onSubmit={handleSubmit} className="flex flex-col gap-4 max-w-2xs ml-auto mr-auto max-w-md ">
                     <div className='ml-auto mr-auto max-w-md'>

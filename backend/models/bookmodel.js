@@ -9,7 +9,8 @@ const schema = new mongoose.Schema({
   recommendedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Person' }],
   personSuggesting: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
   image: String,
-  likes: Number
+  likes: {type: Number, default: 0},
+  accepted: {type: Boolean, default: false}
 });
 
 schema.set('toJSON', {

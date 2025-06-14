@@ -38,9 +38,6 @@ router.post('/', tokenExtractor, async (req, res) => {
   if (!book || !book.title || !book.author || !book.year || !book.recommendedBy || !book.description || !book.image) {
     return res.status(400).send({ error: 'Title, author, year, recommendedBy, description, and image are required' });
   }
-
-  book.likes = 0;
-
   // ✅ Get the user ID from the token
   const userId = req.decodedToken.id;
 
