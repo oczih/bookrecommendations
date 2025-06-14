@@ -5,7 +5,7 @@ export const getByUserId = async (id) => {
   if (!u) return null;
   return {
     mongoId: u._id.toString(),
-    id: u._id.toString(),  // explicitly define string id here
+    id: u._id.toString(), 
     name: u.name,
     username: u.username,
     suggestedBooks: Array.isArray(u.suggestedBooks) 
