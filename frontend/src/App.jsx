@@ -51,7 +51,7 @@ const App = () => {
   event.preventDefault();
   try {
     const response = await loginService.login({ username, password })
-    const user = { ...response, id: response.id } // ✅ Map _id to id
+    const user = { ...response, id: response.id }
     window.localStorage.setItem('loggedBookappUser', JSON.stringify(user))
     bookService.setToken(user.token)
     peopleService.setToken(user.token)
@@ -92,6 +92,12 @@ const App = () => {
       setMessage("Couldn't register this user")
     }
   }
+  const PublicRoute = ({ user, children }) => {
+    if (user) {
+      return <Navigate to="/" replace />;
+    }
+    return children;
+  };
   const submitNewObject = async (values) => {
   try {
     if (Object.prototype.hasOwnProperty.call(values, 'name')) {
@@ -136,7 +142,7 @@ useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBookappUser')
     if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON)
-      // ✅ Ensure the ID is available
+ 
       if (!user.id && user._id) {
         user.id = user._id
       }
@@ -241,13 +247,22 @@ useEffect(() => {
           />
           } />
           
-        <Route path="/register" element={
-          <ProtectedRoute user={user}><RegisterScreen handleSubmit={handleRegister} name={name}
-         handleNameChange={handleNameChange} username={username}
-        password={password} handlePasswordChange={handlePasswordChange} handleUsernameChange={handleUsernameChange} message={message} 
-        user={user} setMessage={setMessage}
-        />
-        </ProtectedRoute>}/>
+          <Route path="/register" element={
+            <PublicRoute user={user}>
+              <RegisterScreen
+                handleSubmit={handleRegister}
+                name={name}
+                handleNameChange={handleNameChange}
+                username={username}
+                password={password}
+                handlePasswordChange={handlePasswordChange}
+                handleUsernameChange={handleUsernameChange}
+                message={message}
+                user={user}
+                setMessage={setMessage}
+              />
+            </PublicRoute>
+          } />
       </Routes>
     </div>
   );
