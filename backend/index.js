@@ -6,6 +6,8 @@ import cors from 'cors';
 import BooksRouter from './routes/books.js';
 import PeopleRouter from './routes/people.js';
 import loginRouter from './routes/login.js'
+import path from 'path';
+import { fileURLToPath } from 'url';
 const app = express();
 const PORT = process.env.PORT || 3001;
 const MONGO_URI = process.env.MONGO_URI;
@@ -32,7 +34,14 @@ mongoose.connect(MONGO_URI)
     })
 
 
-
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    
+    app.use(express.static(path.join(__dirname, 'dist')));
+    
+    app.get('*', (req, res) => {
+      res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+    });
 
 
 
