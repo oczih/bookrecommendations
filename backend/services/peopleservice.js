@@ -10,7 +10,8 @@ export const getEntries = async () => {
     recommendedBooks: p.recommendedBooks.map(id => id.toString()),
     personSuggesting: p.personSuggesting,
     image: p.image,
-    likes: p.likes
+    likes: p.likes,
+    accepted: p.accepted
   }));
 };
 export const getByPeopleId = async (id) => {
@@ -23,13 +24,14 @@ export const getByPeopleId = async (id) => {
     recommendedBooks: p.recommendedBooks.map(id => id.toString()),
     personSuggesting: p.personSuggesting,
     image: p.image,
-    likes: p.likes
+    likes: p.likes,
+    accepted: p.accepted
   };
 };
 export const addPerson = async (entry) => {
   try {
     const bookDocs = await Book.find({ title: { $in: entry.recommendedBooks } });
-    console.log('Books found:', bookDocs);  // <<<<< Add this line to debug
+    console.log('Books found:', bookDocs);
     const bookIds = bookDocs.map(book => book._id);
 
     const newPerson = new Person({
@@ -43,16 +45,37 @@ export const addPerson = async (entry) => {
   }
 };
 export const updatePerson = async (id, data) => {
-  const updatedPerson = await Person.findByIdAndUpdate(id, data, { new: true }).lean();
-  if (!updatedPerson) return null;
+  const person = await Person.findById(id);
+  if (!person) return null;
+  const updatableFields = [
+    'name',
+    'socialMedia',
+    'recommendedBooks',
+    'image',
+    'personSuggesting',
+    'recommendedBy',
+    'likes',
+    'accepted'
+  ];
+
+  updatableFields.forEach(field => {
+    if (data[field] !== undefined) {
+      person[field] = data[field];
+    }
+  });
+  if (person.likes >= 20) {
+    person.accepted = true;
+  }
+  await person.save();
 
   return {
-    mongoId: updatedPerson._id.toString(),
-    originalId: updatedPerson.originalId,
-    name: updatedPerson.name,
-    picture: updatedPerson.picture,
-    recommendedBooks: updatedPerson.recommendedBooks.map(bid => bid.toString()),
-    personSuggesting: updatedPerson.personSuggesting,
-    likes: updatedPerson.likes
+    mongoId: person._id.toString(),
+    originalId: person.originalId,
+    name: person.name,
+    image: person.image,
+    recommendedBooks: person.recommendedBooks.map(bid => bid.toString()),
+    personSuggesting: person.personSuggesting,
+    likes: person.likes,
+    accepted: person.accepted
   };
 };

@@ -4,6 +4,7 @@ const router = express.Router();
 import tokenExtractor from '../middleware/tokenextractor.js'
 import User from '../models/user.js'
 import Person from '../models/personmodel.js'
+import { userExtractor } from '../middleware/userextractor.js';
 router.get('/', async (req, res) => {
   try {
     const people = await peopleService.getEntries();
@@ -29,15 +30,16 @@ router.get('/:id', async (req, res) => {
 router.post('/', tokenExtractor, async (req, res) => {
   try {
     // 1. Create new person from req.body
-    const person = new Person(req.body);
-    
     // 2. Save the person to DB
-    const savedPerson = await person.save();
 
     // 3. Get userId from token
     console.log(req.decodedToken)
     const userId = req.decodedToken.id;
-
+    const person = new Person({
+      ...req.body,
+      personSuggesting: [userId]
+    });
+    const savedPerson = await person.save();
     person.personSuggesting = [userId];
     await User.updateOne(
       { _id: userId },
@@ -64,5 +66,25 @@ router.put('/:id', async (req,res) => {
         console.error(error);
         res.status(500).json({ error: 'Failed to update person' });
     }
+})
+router.delete('/:id', userExtractor, async (request, response) => {
+  const user = request.user
+
+  const person = await Person.findById(request.params.id)
+  if (!person) {
+    return response.status(204).end()
+  }
+  console.log(person)
+  if ( user.id.toString() !== person.personSuggesting.toString() ) {
+    return response.status(403).json({ error: 'user not authorized' })
+  }
+
+  await person.deleteOne()
+
+  user.suggestedPeople = user.suggestedPeople.filter(b => b._id.toString() !== person._id.toString())
+
+  await user.save()
+
+  response.status(204).end()
 })
 export default router;

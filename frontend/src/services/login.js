@@ -15,7 +15,6 @@ const register = async credits => {
 }
 const get = async (id) => {
     const { data } = await axios.get(`${API_URL}/${id}`);
-    console.log(data)
     return data;
 }
 const update = async (credits, id) => {

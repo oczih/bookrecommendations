@@ -4,7 +4,7 @@ import peopleService from './services/people';
 import {
   BrowserRouter as Router,
   Routes, Route, Link,
-  useMatch, useNavigate
+  useMatch, useNavigate, Navigate
 } from 'react-router-dom'
 import { SinglePersonPage } from './components/SinglePersonPage';
 import { Header } from './components/Header'
@@ -64,6 +64,13 @@ const App = () => {
     setMessage('Wrong username or password')
   }
 }
+  const ProtectedRoute = ({ user, children }) => {
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
   const handleNameChange = event => {
     setName(event.target.value)
   }
@@ -124,9 +131,7 @@ useEffect(() => {
     return () => clearTimeout(timer);
   }
 }, [message]);
-  useEffect(() => {
-  console.log('Suggested Books:', suggestedBooks);
-}, [suggestedBooks]);
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBookappUser')
     if (loggedUserJSON) {
@@ -145,7 +150,6 @@ useEffect(() => {
         if (user && user.id) { // ✅ make sure user and ID exist
             try {
                 const data = await loginService.get(user.id);
-                console.log(data)
                 setSuggestedBooks(data.suggestedBooks || []);
             } catch (error) {
                 console.error('Failed to fetch suggested books: ', error);
@@ -160,7 +164,6 @@ useEffect(() => {
       if(user && user.id){
         try{
           const data = await loginService.get(user.id)
-          console.log(data)
           setSuggestedpeople(data.suggestedPeople || [])
         }catch (error){
           setMessage('Failed to fetch suggested people')
@@ -171,15 +174,13 @@ useEffect(() => {
     }
     fetchSuggestedPeople();
   }, [user])
-  useEffect(() => {
-  console.log('Suggested People:', suggestedPeople);
-}, [suggestedPeople]);
+
   return (
     <div className="min-h-screen bg-gradient-to-r from-purple-500 to-indigo-500 p-8">
       <Routes>
         <Route path="/" element={
           <>
-            <Header user={user} setUser={setUser}/>
+            <Header user={user} setUser={setUser} setMessage={setMessage}/>
             <Notification message={message} color={color}/>
             <div className="rounded-sm min-h-[10vh] bg-white/[var(--bg-opacity)] [--bg-opacity:50%] mb-8">
               <div className="p-10">
@@ -188,23 +189,42 @@ useEffect(() => {
                 </h1>
               </div>
             </div>
-            {people ? (<div className="max-w-4xl mx-auto grid gap-8 grid-cols-1 md:grid-cols-2">
-              {people.map(person => (
-                <Link to={`/people/${person.mongoId}`} key={person.id}>
-                  <div className="bg-white p-6 rounded-2xl shadow-lg text-center">
-                    <img src={person.image} alt={person.name} className="rounded-full w-30 h-30 object-cover object-center max-w-md ml-auto mr-auto" />      
-                    <h2 className="text-xl font-bold tracking-tight text-gray-900">{person.name}</h2>
-                  </div>
-                </Link>
-              ))}
-            </div>) : (<div>
-            <h2 className="text-2xl text-center text-white">No people available</h2>
-          </div>)}
+            {people && people.length > 0 ? (
+            <div className="max-w-6xl mx-auto grid gap-6 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 p-4">
+              {people
+                .filter(person => person.accepted)
+                .map(person => (
+                  <Link to={`/people/${person.mongoId}`} key={person.mongoId}>
+                    <div className="bg-white p-4 rounded-2xl shadow-lg text-center hover:scale-95 transition-transform duration-150 ease-in-out">
+                      <img
+                        src={person.image}
+                        alt={person.name}
+                        className="rounded-full w-32 h-32 object-cover object-center mx-auto mb-4"
+                      />
+                      <h2 className="text-lg font-bold tracking-tight text-gray-900">{person.name}</h2>
+                    </div>
+                  </Link>
+                ))}
+            </div>
+          ) : (
+            <div>
+              <h2 className="text-2xl text-center text-white">No people available</h2>
+            </div>
+          )}
+
           </>
         } />
-        <Route path="/people/:id" element={<SinglePersonWrapper user={user} setUser={setUser} people={people} books={books} />} />
-        {user && <><Route path={"/suggestaperson"} element={<SuggestAPerson onSubmit={submitNewObject} people={people} user={user}/>}/>
-        <Route path={"/vote"} element={<VoteScreen user={user} setUser={setUser} />} /> </>}
+        <Route path="/people/:id" element={<SinglePersonWrapper user={user} setUser={setUser} people={people} books={books} message={message} setMessage={setMessage}/>} />
+        <Route path="/suggestaperson" element={
+          <ProtectedRoute user={user}>
+            <SuggestAPerson onSubmit={submitNewObject} people={people} user={user} setMessage={setMessage} setUser={setUser} message={message}/>
+          </ProtectedRoute>
+        } />
+        <Route path="/vote" element={
+          <ProtectedRoute user={user}>
+            <VoteScreen user={user} setUser={setUser} />
+          </ProtectedRoute>
+        } />
         <Route path="/login" element={
         <LoginScreen
           user={user}
@@ -216,27 +236,31 @@ useEffect(() => {
           handleUsernameChange={handleUsernameChange} 
           handlePasswordChange={handlePasswordChange} 
           message={message} 
+          setMessage={setMessage}
+          setUser={setUser}
           />
           } />
-        <Route path="/register" element={<RegisterScreen handleSubmit={handleRegister} name={name}
+          
+        <Route path="/register" element={
+          <ProtectedRoute user={user}><RegisterScreen handleSubmit={handleRegister} name={name}
          handleNameChange={handleNameChange} username={username}
         password={password} handlePasswordChange={handlePasswordChange} handleUsernameChange={handleUsernameChange} message={message} 
-        user={user}
-        />}/>
+        user={user} setMessage={setMessage}
+        />
+        </ProtectedRoute>}/>
       </Routes>
     </div>
   );
 };
 
-const SinglePersonWrapper = ({ user, setUser, people, books }) => {
+const SinglePersonWrapper = ({ user, setUser, people, books, message, setMessage }) => {
   const match = useMatch('/people/:id');
   const personId = match?.params?.id;
   const person = people.find(p => p.mongoId === personId) || null;
 
   // ✅ Filter the books to only the recommended ones
   const recommendedBooks = books.filter(book => person?.recommendedBooks.includes(book._id));
-  console.log(recommendedBooks)
-  return <SinglePersonPage user={user} setUser={setUser} person={person} books={recommendedBooks} />;
+  return <SinglePersonPage user={user} setUser={setUser} person={person} books={recommendedBooks} message={message} setMessage={setMessage} />;
 };
 
 export default App;

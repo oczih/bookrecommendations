@@ -5,6 +5,7 @@ import Book from '../models/bookmodel.js';
 import Person from '../models/personmodel.js'
 import tokenExtractor from '../middleware/tokenextractor.js'
 import User from '../models/user.js'
+import { userExtractor } from '../middleware/userextractor.js';
 // Get all books
 router.get('/', async (req, res) => {
   try {
@@ -84,5 +85,24 @@ router.put('/:id', async (req, res) => {
     res.status(500).json({ error: 'Failed to update book' });
   }
 });
+router.delete('/:id', userExtractor, async (request, response) => {
+  const user = request.user
 
+  const book = await Book.findById(request.params.id)
+  if (!book) {
+    return response.status(204).end()
+  }
+  console.log(book)
+  if ( user.id.toString() !== book.personSuggesting.toString() ) {
+    return response.status(403).json({ error: 'user not authorized' })
+  }
+
+  await book.deleteOne()
+
+  user.suggestedBooks = user.suggestedBooks.filter(b => b._id.toString() !== book._id.toString())
+
+  await user.save()
+
+  response.status(204).end()
+})
 export default router;

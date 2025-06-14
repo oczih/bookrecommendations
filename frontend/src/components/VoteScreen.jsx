@@ -77,13 +77,13 @@ export const VoteScreen = ({ user, setUser }) => {
   }
   return (
     <div>
-      <Header user={user} setUser={setUser} />
+      <Header user={user} setUser={setUser} setMessage={setMessage} />
       <Notification message={message}/>
-      <Link to={"/"}>
-            <button className="ml-auto mr-auto max-w-md bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded hover:scale-95 transition-transform duration-150 ease-in-out drop-shadow-xl">
-                Go back
-            </button>
-            </Link>
+      <div className="flex justify-center mt-8 mb-10">
+                    <Link to={"/"} className="btn btn-outline w-md max-w-md">
+                        Go Back
+                    </Link>
+                </div>
       <div className="ml-auto mr-auto max-w-md">
         <h1 className="text-2xl font-bold text-white">
           Vote here for your favorite book or person to be featured!
@@ -94,6 +94,7 @@ export const VoteScreen = ({ user, setUser }) => {
     {people
       .sort((a, b) => b.likes - a.likes)
       .map(p => (
+        !p.accepted &&
         <li key={p.mongoId} className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
           <img src={p.image} alt={p.title} className="w-30 h-30 object-cover rounded" />
@@ -101,7 +102,7 @@ export const VoteScreen = ({ user, setUser }) => {
           </div>
           <button
             onClick={() => handlePersonLike(p.mongoId)}
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary btn-sm hover:scale-95 ease-in-out"
           >
             Like
           </button>
@@ -112,6 +113,7 @@ export const VoteScreen = ({ user, setUser }) => {
     {books
       .sort((a, b) => b.likes - a.likes)
       .map(b => (
+        !b.accepted && 
         <li key={b._id} className="mb-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <img src={b.image} alt={b.title} className="w-30 h-30 object-cover rounded" />
@@ -119,7 +121,7 @@ export const VoteScreen = ({ user, setUser }) => {
           </div>
           <button
             onClick={() => handleBookLike(b._id)}
-            className="btn btn-primary btn-sm"
+            className="btn btn-primary btn-sm hover:scale-95 ease-in-out"
           >
             Like
           </button>
