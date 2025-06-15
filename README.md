@@ -7,14 +7,15 @@
 
 Live Demo: https://bookrecommendations-n5ez.onrender.com/
 
-- Users can:
+Users can:
+
 - View books recommended by famous people
 - Registered users can:
 - Suggest their own Person/Book
 - View their suggested people/books
 - Vote on suggested books/people
 
-- What did I learn?
+What did I learn?
   
 - How to design and build a backend API for a real-world application.
 - How to connect a server to a database and manage data effectively.
