@@ -24,4 +24,4 @@ What did I learn?
 - How to handle errors and provide useful responses to the client.
 - How to debug, test, and improve the backend logic.
 - How to think through the full request-response cycle in a web app.
-- How to style with Tailwind, MaterialUI & DaisuUI
+- How to style with Tailwind, MaterialUI & DaisyUI
