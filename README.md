@@ -3,6 +3,8 @@
 - Implemented user auth, dynamic voting logic, and automatic promotion of popular content.
 - Technologies: React, Node.js, Express, MongoDB, JWT, Tailwind, DaisyUI
 
+![](BookRecommendationsGif.gif)
+
 Live Demo: https://bookrecommendations-n5ez.onrender.com/
 
 - Users can:
